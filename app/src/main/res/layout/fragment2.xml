@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <EditText
+        android:id="@+id/fragment2EditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"/>
+
+    <Button
+        android:id="@+id/fragment2Btn1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="保存数据"/>
+
+    <Button
+        android:id="@+id/fragment2Btn2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="显示数据"/>
+
+    <TextView
+        android:id="@+id/fragment2TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="你好"
+        android:gravity="center"
+        />
+
+</LinearLayout>
