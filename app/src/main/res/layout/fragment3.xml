@@ -3,23 +3,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center">
+    android:gravity="center_horizontal">
 
 
     <EditText
         android:id="@+id/fragment3EditText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:hint="输入网址"
+        android:layout_weight="0.5"/>
 
     <Button
         android:id="@+id/fragment3Btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="转到"/>
+        android:text="转到"
+        android:layout_weight="1"/>
     <WebView
         android:id="@+id/fragment3WebView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_weight="8"/>
 
 
 </LinearLayout>
