@@ -2,17 +2,23 @@ package com.example.demo211117;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,136 +41,135 @@ import okhttp3.Request;
 import okhttp3.Request.Builder;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+
+    private TextView fragmentText1;
+    private TextView fragmentText2;
+    private TextView fragmentText3;
+    private TextView fragmentText4;
+    private FrameLayout fragmentContent;
+
+    private LeftTopFragment fragment1;
+    private RightTopFragment fragment2;
+    private LeftBottomFragment fragment3;
+    private RightBottomFragment fragment4;
+
+    private FragmentManager fragmentManager;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
+        fragmentManager = getSupportFragmentManager();
+        bindViews();
+        fragmentText1.performClick();
+    }
 
-        Button fragment1Btn = (Button) findViewById(R.id.fragment1Btn);
-        EditText fragment1EditText = (EditText) findViewById(R.id.fragment1EditText);
-        fragment1Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        while(true){
-                            Random ra = new Random();
-                            int num = ra.nextInt(1000+1);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    fragment1EditText.setText(String.valueOf(num));
-                                }
-                            });
-                            try {
-                                Thread.sleep(3000);
-                            }catch (Exception e){
-                                Log.e("TAG", "run: ");
-                            }
-                        }
-                    }
-                }).start();
+    private void bindViews(){
+        fragmentText1 = (TextView) findViewById(R.id.fragment_1);
+        fragmentText2 = (TextView) findViewById(R.id.fragment_2);
+        fragmentText3 = (TextView) findViewById(R.id.fragment_3);
+        fragmentText4 = (TextView) findViewById(R.id.fragment_4);
+        fragmentContent = (FrameLayout) findViewById(R.id.content);
 
-            }
-        });
-
-        Button fragment2SaveBtn = (Button) findViewById(R.id.fragment2Btn1);
-        Button fragment2ShowBtn = (Button) findViewById(R.id.fragment2Btn2);
-        EditText fragment2EditText = (EditText) findViewById(R.id.fragment2EditText);
-        TextView fragment2TextView = (TextView) findViewById(R.id.fragment2TextView);
-
-        fragment2SaveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SharedPreferences.Editor editor = getSharedPreferences("DataOfFragment2", MODE_PRIVATE).edit();
-                editor.putString("data",fragment2EditText.getText().toString());
-                editor.apply();
-            }
-        });
-
-        fragment2ShowBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SharedPreferences preferences = getSharedPreferences("DataOfFragment2", MODE_PRIVATE);
-                String str = preferences.getString("data", null);
-                fragment2TextView.setText(str);
-            }
-        });
+        fragmentText1.setOnClickListener((View.OnClickListener) this);
+        fragmentText2.setOnClickListener((View.OnClickListener) this);
+        fragmentText3.setOnClickListener((View.OnClickListener) this);
+        fragmentText4.setOnClickListener((View.OnClickListener) this);
 
 
-        Button fragment3Btn = (Button) findViewById(R.id.fragment3Btn);
-        EditText fragment3EditText = (EditText) findViewById(R.id.fragment3EditText);
 
-        fragment3Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WebView fragment3WebView = (WebView) findViewById(R.id.fragment3WebView);
-                fragment3WebView.getSettings().setJavaScriptEnabled(true);
-                fragment3WebView.setWebViewClient(new WebViewClient());
-                fragment3WebView.loadUrl(fragment3EditText.getText().toString());
+    }
 
-            }
-        });
-
-        Button fragment4Btn = (Button) findViewById(R.id.fragment4Btn);
-        List<String> titlesList = new ArrayList<>();
-        //String[] data = {"1", "2", "3", "4", "5", "6","7", "8", "9", "10","1", "2", "3", "4", "5", "6","7", "8", "9", "10"};
-        fragment4Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try{
-                            OkHttpClient client = new OkHttpClient();
-                            for (int kk = 0; kk<10; kk++){
-                                String data = "https://www.wanandroid.com/article/list/"+kk+"/json";
-                                Request request = new Builder().url(data).build();
-                                Response response = client.newCall(request).execute();
-                                String jsonData = response.body().string();
-
-                                JSONObject jsonObject = new JSONObject(jsonData);
-                                //jsonObject = jsonObject.getJSONObject("data");
-                                String data0 = jsonObject.getString("data");
-
-                                JSONObject jsonObject1 = new JSONObject(data0);
-                                JSONArray jsonArray =new JSONArray();
-                                jsonArray = jsonObject1.getJSONArray("datas");
-
-
-                                for (int i =0; i<jsonArray.length(); i++){
-                                    String title = jsonArray.getJSONObject(i).getString("title");
-                                    titlesList.add(title);
-                                }
-                            }
-
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ListView fragment4ListView = (ListView) findViewById(R.id.fragment4ListView);
-                                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, titlesList);
-                                    fragment4ListView.setAdapter(adapter);
-                                }
-                            });
-
-
-                        }catch (Exception e){
-                            e.printStackTrace();
-                            Log.e("TAG", "run: 000");
-                        }
-
-                    }
-                }).start();
-
-
-            }
-        });
-
+    private void setSelected(){
+        fragmentText1.setSelected(false);
+        fragmentText1.setBackgroundColor(Color.TRANSPARENT);
+        fragmentText2.setSelected(false);
+        fragmentText2.setBackgroundColor(Color.TRANSPARENT);
+        fragmentText3.setSelected(false);
+        fragmentText3.setBackgroundColor(Color.TRANSPARENT);
+        fragmentText4.setSelected(false);
+        fragmentText4.setBackgroundColor(Color.TRANSPARENT);
     }
 
 
 
+
+
+
+
+
+
+
+    private void hideAllFragment(FragmentTransaction fragmentTransaction){
+        if(fragment1 != null) {
+            fragmentTransaction.hide(fragment1);
+        }
+        if(fragment2 != null) {
+            fragmentTransaction.hide(fragment2);
+        }
+        if(fragment3 != null) {
+            fragmentTransaction.hide(fragment3);
+        }
+        if(fragment4 != null) {
+            fragmentTransaction.hide(fragment4);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        FragmentTransaction fTransaction = fragmentManager.beginTransaction();
+        hideAllFragment(fTransaction);
+        switch (v.getId()){
+            case R.id.fragment_1:
+                setSelected();
+                fragmentText1.setSelected(true);
+                fragmentText1.setBackgroundColor(Color.parseColor("#ffffe0"));
+                if (fragment1 == null){
+                    fragment1 = new LeftTopFragment();
+                    fTransaction.add(R.id.content, fragment1);
+                }else{
+                    fTransaction.show(fragment1);
+                }
+                break;
+            case R.id.fragment_2:
+                setSelected();
+                fragmentText2.setSelected(true);
+                fragmentText2.setBackgroundColor(Color.parseColor("#ffffe0"));
+                if (fragment2 == null){
+                    fragment2 = new RightTopFragment();
+                    fTransaction.add(R.id.content, fragment2);
+                }else{
+                    fTransaction.show(fragment2);
+                }
+                break;
+            case R.id.fragment_3:
+                setSelected();
+                fragmentText3.setSelected(true);
+                fragmentText3.setBackgroundColor(Color.parseColor("#ffffe0"));
+                if (fragment3 == null){
+                    fragment3 = new LeftBottomFragment();
+                    fTransaction.add(R.id.content, fragment3);
+                }else{
+                    fTransaction.show(fragment3);
+                }
+                break;
+            case R.id.fragment_4:
+                setSelected();
+                fragmentText4.setSelected(true);
+                if (fragment4 == null){
+                    fragment4 = new RightBottomFragment();
+                    fragmentText4.setBackgroundColor(Color.parseColor("#ffffe0"));
+                    fTransaction.add(R.id.content, fragment4);
+                }else{
+                    fTransaction.show(fragment4);
+                }
+                break;
+
+        }
+        fTransaction.commit();
+    }
 }
