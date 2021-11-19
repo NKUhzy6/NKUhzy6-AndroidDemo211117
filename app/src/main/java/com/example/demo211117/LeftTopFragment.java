@@ -54,7 +54,7 @@ public class LeftTopFragment extends Fragment {
         fragment1Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
+                Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
                         while(true){
@@ -75,7 +75,30 @@ public class LeftTopFragment extends Fragment {
                             }
                         }
                     }
-                }).start();
+                };
+                ThreadPoolSingleton.getInstance().threadPoolExecutor.execute(runnable);
+                /*new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        while(true){
+
+                            Message message = new Message();
+                            message.what = UPDATE_TEXT;
+                            handler.sendMessage(message);
+                            /*runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    fragment1EditText.setText(String.valueOf(num));
+                                }
+                            });
+                            try {
+                                Thread.sleep(3000);
+                            }catch (Exception e){
+                                Log.e("TAG", "run: ");
+                            }
+                        }
+                    }
+                }).start();*/
             }
         });
 

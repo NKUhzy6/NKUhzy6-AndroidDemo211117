@@ -62,28 +62,28 @@ public class RightBottomFragment extends Fragment {
         fragment4Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
+                Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
                         try{
                             OkHttpClient client = new OkHttpClient();
-                            for (int kk = 0; kk<10; kk++){
-                                String data = "https://www.wanandroid.com/article/list/"+kk+"/json";
+                            for (int page = 0; page<10; page++){
+                                String data = "https://www.wanandroid.com/article/list/"+ page+ "/json";
                                 Request request = new Request.Builder().url(data).build();
                                 Response response = client.newCall(request).execute();
                                 String jsonData = response.body().string();
                                 //Gson
                                 JSONObject jsonObject = new JSONObject(jsonData);
                                 //jsonObject = jsonObject.getJSONObject("data");
-                                String data0 = jsonObject.getString("data");
+                                String data0 = jsonObject.optString("data");
 
                                 JSONObject jsonObject1 = new JSONObject(data0);
                                 JSONArray jsonArray =new JSONArray();
-                                jsonArray = jsonObject1.getJSONArray("datas");
+                                jsonArray = jsonObject1.optJSONArray("datas");
 
 
                                 for (int i =0; i<jsonArray.length(); i++){
-                                    String title = jsonArray.getJSONObject(i).getString("title");
+                                    String title = jsonArray.getJSONObject(i).optString("title");
                                     titlesList.add(title);
                                 }
                             }
@@ -106,7 +106,8 @@ public class RightBottomFragment extends Fragment {
                         }
 
                     }
-                }).start();
+                };
+                ThreadPoolSingleton.getInstance().threadPoolExecutor.execute(runnable);
 
 
             }
